@@ -5,7 +5,7 @@ const Speech = require('ssml-builder');
 var AWS = require('aws-sdk');
 var AmazonSpeech = require('ssml-builder/amazon_speech');
 var speech = new AmazonSpeech();
-const APP_ID = 'amzn1.ask.skill.0e2df4db-543c-497b-a7b6-e65b585674c7';
+const APP_ID = 'amzn1.ask.skill.f07804f2-0d90-456c-8296-04df5931442a';
 
 const newSessionHandlers = {
     'LaunchRequest': function () {
@@ -16,9 +16,13 @@ const newSessionHandlers = {
         var that = this;
         buildClips(sessionAttributes, function(){
             var fileURL = getRandomQuote(sessionAttributes);
-            speech.audio(fileURL);
-            that.emit(':tell', speech.ssml(true));
-            speech = new AmazonSpeech();
+            if(!fileURL){
+                that.emit(":tell","Sorry, no quotes");
+            }else{
+                speech.audio(fileURL);
+                that.emit(':tell', speech.ssml(true));
+                speech = new AmazonSpeech();
+            }
         });
     },
     'GetMultipleQuotesIntent': function(){
@@ -91,7 +95,7 @@ function assembleAudioFiles(sessionAttributes, callback) {
     });
     var s3 = new AWS.S3();
     var params = {
-        Bucket: "soundsofswanson",
+        Bucket: "soundsofschrute",
         Delimiter: "/",
         EncodingType: "url"
     };
